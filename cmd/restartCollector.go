@@ -35,7 +35,7 @@ func restartCollector() {
 	// Connect to the system bus
 	conn, err := dbus.NewWithContext(ctx)
 	if err != nil {
-		log.Fatalf("Failed to connect to system bus: %v", err)
+		log.Fatalf("Failed to connect to system bus: %v\n", err)
 	}
 	defer conn.Close()
 
@@ -45,7 +45,7 @@ func restartCollector() {
 	mode := "replace"
 	_, err = conn.RestartUnitContext(ctx, unitName, mode, nil)
 	if err != nil {
-		log.Fatalf("Failed to restart service: %v", err)
+		log.Fatalf("Failed to restart service: %v\n", err)
 	} else {
 		fmt.Printf("Service '%s' restarted\n", unitName)
 	}
@@ -58,7 +58,7 @@ func restartCollector() {
 	var bridgeAddress16BitBlock net.IP
 	ifaces, err := net.Interfaces()
 	if err != nil {
-		log.Fatalf("Couldn't get list of the system's netowrk interfaces, %v\n", err.Error())
+		log.Fatalf("Couldn't get list of the system's network interfaces, %v\n", err.Error())
 	}
 
 	for _, i := range ifaces {
@@ -90,7 +90,7 @@ func restartCollector() {
 
 	err = cmd.Run()
 	if err != nil {
-		log.Fatalf("Failed to add bridge route: %v", err)
+		log.Fatalf("Failed to add bridge route: %v\n", err)
 	}
 	fmt.Println("Bridge route added successfully.")
 }

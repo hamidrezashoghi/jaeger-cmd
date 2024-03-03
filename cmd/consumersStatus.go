@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/user"
 	"strconv"
 	"strings"
 
@@ -82,12 +83,14 @@ func consumersStatus() {
 	}
 
 	// Change ownership of consumer_servers.prom
-	// execute below command to get uid and gid of node_exporter
-	// # id node_exporter
-	// uid=997(node_exporter) gid=998(node_exporter) groups=998(node_exporter)
-	var uidNodeExporter int = 997
-	var gidNodeExporter int = 998
-	_ = os.Chown("consumer_servers.prom", uidNodeExporter, gidNodeExporter)
+	nodeExporterUser, err := user.Lookup("node_exporter")
+	if err != nil {
+		log.Fatalln("node_exporter user not exist on server.")
+	}
+
+	nodeExporterUserId, _ := strconv.Atoi(nodeExporterUser.Uid)
+	nodeExporterUserGid, _ := strconv.Atoi(nodeExporterUser.Gid)
+	_ = os.Chown("consumer_servers.prom", nodeExporterUserId, int(nodeExporterUserGid))
 
 	// /var/lib/node_exporter/textfile_collector/
 	if err := os.Rename("consumer_servers.prom", consumerServersFile); err != nil {
