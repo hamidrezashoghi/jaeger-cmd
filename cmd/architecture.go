@@ -1,40 +1,63 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
-	"fmt"
+	"context"
+	"log"
 
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/client"
 	"github.com/spf13/cobra"
 )
 
 // architectureCmd represents the architecture command
 var architectureCmd = &cobra.Command{
 	Use:   "architecture",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Generate relationship between traces - System Architecture in Jaeger UI",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("architecture called")
+		architecture()
 	},
+}
+
+func stopAndRemoveContainer(client *client.Client, containerName string) {
+	ctx := context.Background()
+
+	stopOptions := container.StopOptions{
+		Signal:  "SIGTERM",
+		Timeout: new(int),
+	}
+
+	// Set the Timeout to 0
+	*stopOptions.Timeout = 0
+
+	if err := client.ContainerStop(ctx, containerName, stopOptions); err != nil {
+		log.Fatalf("Unable to stop %s container, %s\n", containerName, err)
+	}
+
+	removeOptions := container.RemoveOptions{
+		RemoveVolumes: true,
+		Force:         true,
+	}
+
+	if err := client.ContainerRemove(ctx, containerName, removeOptions); err != nil {
+		log.Fatalf("Unable to remove %s container, %s\n", containerName, err)
+	}
+}
+
+func architecture() {
+
+	client, err := client.NewClientWithOpts(
+		client.FromEnv,
+		client.WithAPIVersionNegotiation(),
+	)
+
+	if err != nil {
+		log.Fatalf("Unable to create docker client, %s", err)
+	}
+
+	// Stops and remove a container
+	stopAndRemoveContainer(client, "ubuntu-agent2")
 }
 
 func init() {
 	rootCmd.AddCommand(architectureCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// architectureCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// architectureCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
