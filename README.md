@@ -1,5 +1,5 @@
 # jaeger-cmd
-Some related tasks to jaeger
+Some related jobs to jaeger
 
 ### 1. restart-jaeger-collector
 
@@ -66,3 +66,7 @@ mv /usr/local/kafka_2.13-3.6.0 /usr/local/kafka
 
 ##### Why node_exporter?
 If you put a prom file in `/var/lib/node_exporter/textfile_collector/` path your metrics expose along other
+
+### 3. architecture
+Generate `System Architecture` in Jaeger UI
+https://github.com/jaegertracing/spark-dependencies/tree/main
