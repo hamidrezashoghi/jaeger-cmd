@@ -70,3 +70,6 @@ If you put a prom file in `/var/lib/node_exporter/textfile_collector/` path your
 ### 3. architecture
 Generate `System Architecture` in Jaeger UI
 https://github.com/jaegertracing/spark-dependencies/tree/main
+
+### 4. restart-cassandra
+Restart Cassandra when one of them doesn't respond
