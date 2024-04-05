@@ -54,9 +54,11 @@ WantedBy=multi-user.target
 192.168.1.3 kafka-02.local2.server
 192.168.1.4 kafka-03.local3.server
 ```
+
 * You should be able to connect to the kafka brokers via port 9092
 
 ##### Download kafka and extract it in /usr/local/
+
 ```
 sudo -i
 wget -c wget -c https://downloads.apache.org/kafka/3.6.0/kafka_2.13-3.6.0.tgz
@@ -72,4 +74,4 @@ Generate `System Architecture` in Jaeger UI
 https://github.com/jaegertracing/spark-dependencies/tree/main
 
 ### 4. restart-cassandra
-Restart Cassandra when one of them doesn't respond
+Restart Cassandra when leaves the cluster
