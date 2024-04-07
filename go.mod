@@ -8,6 +8,8 @@ require (
 	github.com/spf13/cobra v1.8.0
 )
 
+require golang.org/x/net v0.20.0 // indirect
+
 require (
 	github.com/Microsoft/go-winio v0.4.14 // indirect
 	github.com/containerd/log v0.1.0 // indirect
