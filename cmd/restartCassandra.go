@@ -1,9 +1,15 @@
 package cmd
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+	"os"
 	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -22,8 +28,38 @@ func init() {
 	rootCmd.AddCommand(restartCassandraCmd)
 }
 
+type Alert struct {
+	Labels       map[string]string `json:"labels"`
+	Annotations  map[string]string `json:"annotations,omitempty`
+	GeneratorURL string
+}
+
 func restartCassandra() {
 	status := 0
+	hostnameWithDomain, _ := os.Hostname()
+	hostname := strings.Split(hostnameWithDomain, ".")[0]
+
+	alertManagerAPI := "https://alertmanager.local/api/v1/alerts"
+	alert := Alert{
+		Labels: map[string]string{
+			"alertname":   "CassandraRestarted",
+			"severity":    "warning",
+			"instance":    hostname,
+			"environment": "JaegerDatabase",
+		},
+		Annotations: map[string]string{
+			"summary":     "Cassandra service restarted due high load",
+			"description": "Cassandra service restarted automatically on " + hostname,
+		},
+	}
+
+	alerts := []Alert{alert}
+
+	// Convert alerts to json
+	data, err := json.Marshal(alerts)
+	if err != nil {
+		log.Println("Couldn't convert alerts to json")
+	}
 
 	for true {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -38,6 +74,20 @@ func restartCassandra() {
 					fmt.Println("Error restarting Cassandra:", err)
 				} else {
 					fmt.Println("Cassandra restarted successfully.")
+
+					// Send alert to Alertmanager
+					resp, err := http.Post(alertManagerAPI, "application/json", bytes.NewBuffer(data))
+					if err != nil {
+						log.Println("Couldn't sent alert to Alertmanager")
+					} else {
+						fmt.Println("Alert sent to Alertmanager.")
+					}
+					defer resp.Body.Close()
+
+					// Check response from Alertmanager
+					if resp.StatusCode != http.StatusOK {
+						log.Println("Failed to sent alert.")
+					}
 					status = 1
 				}
 			}
