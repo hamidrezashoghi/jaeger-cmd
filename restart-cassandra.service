@@ -1,0 +1,15 @@
+[Unit]
+Description=Restart Cassandra Automatically
+After=multi-user.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/go/src/jaeger-cmd/
+ExecStart=/root/go/src/jaeger-cmd/jaeger-cmd restart-cassandra
+ExecStop=/usr/bin/kill -9 `ps aux | egrep -i 'jaeger-cmd restart-cassandra' | head -n 1 | awk '{print $2}'`
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
