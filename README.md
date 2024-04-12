@@ -1,6 +1,12 @@
 # jaeger-cmd
 Some related jobs to jaeger
 
+## How to build
+```
+cd jaeger-cmd
+go build .
+```
+
 ### 1. restart-jaeger-collector
 
 ##### First create D-Bus connection
@@ -75,3 +81,7 @@ https://github.com/jaegertracing/spark-dependencies/tree/main
 
 ### 4. restart-cassandra
 Restart Cassandra when leaves the cluster
+
+```
+systemctl start restart-cassandra
+```
