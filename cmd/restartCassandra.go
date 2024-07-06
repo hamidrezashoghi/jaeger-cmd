@@ -48,7 +48,7 @@ func restartCassandra() {
 			"environment": "JaegerDatabase",
 		},
 		Annotations: map[string]string{
-			"summary":     "Cassandra service restarted due high load",
+			"summary":     "Not need to inform, Cassandra service restarted due high load",
 			"description": "Cassandra service restarted automatically on " + hostname,
 		},
 	}
